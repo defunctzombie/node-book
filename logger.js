@@ -6,12 +6,7 @@ var Logger = function() {
     // setup the initial decorator
     // just creates the entry object and then starts the chain of execution
     // for all of the remaining decorators
-    self._last_decorator = self._initial_decorator = function(level, msg) {
-        var entry = {
-            level: level
-        };
-        self._initial_decorator.next(entry, msg);
-    };
+    self._last_decorator = self._initial_decorator = {};
 
     // constants
     // repeated here for easy acces since usually we have an instance
@@ -36,10 +31,10 @@ Logger.prototype.push_decorator = function(decorator) {
     // create a function 'next' on the last decorator
     // that will chain to the newly added decorator
     // this of it like a linked list
-    self._last_decorator.next = function(entry, msg) {
-        decorator(entry, msg);
+    self._last_decorator.next = function(entry) {
+        decorator.apply(null, arguments);
         if (decorator.next) {
-            decorator.next(entry, msg);
+            decorator.next.apply(null, arguments);
         }
     }
 
@@ -48,39 +43,50 @@ Logger.prototype.push_decorator = function(decorator) {
     return self;
 };
 
-Logger.prototype.log = function(level, msg) {
-    // start the decorator chain processing
-    this._initial_decorator(level, msg);
+Logger.prototype.log = function(level, args) {
+    var self = this;
+
+    var entry = {
+        level: level
+    };
+
+    var args = Array.prototype.slice.call(args);
+
+    // add the entry to the arguments for decorators
+    args.unshift(entry);
+
+    // start chain of decorators
+    self._initial_decorator.next.apply(self, args);
 };
 
 /// log a panic
-Logger.prototype.panic = function(msg) {
-    return this.log(this.PANIC, msg);
+Logger.prototype.panic = function() {
+    return this.log(this.PANIC, arguments);
 };
 
 /// log an error
-Logger.prototype.error = function(msg) {
-    return this.log(this.ERROR, msg);
+Logger.prototype.error = function() {
+    return this.log(this.ERROR, arguments);
 };
 
 /// log a warning
-Logger.prototype.warn = function(msg) {
-    return this.log(this.WARN, msg);
+Logger.prototype.warn = function() {
+    return this.log(this.WARN, arguments);
 };
 
 /// log info
-Logger.prototype.info = function(msg) {
-    return this.log(this.INFO, msg);
+Logger.prototype.info = function() {
+    return this.log(this.INFO, arguments);
 };
 
 /// log debug information
-Logger.prototype.debug = function(msg) {
-    return this.log(this.DEBUG, msg);
+Logger.prototype.debug = function() {
+    return this.log(this.DEBUG, arguments);
 };
 
 /// log trace info
-Logger.prototype.trace = function(msg) {
-    return this.log(this.TRACE, msg);
+Logger.prototype.trace = function() {
+    return this.log(this.TRACE, arguments);
 };
 
 // create a default logger with some helpful decorators
