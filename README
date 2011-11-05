@@ -1,6 +1,0 @@
-node-logger is a flexible logging library for node.js
-
-Instead of trying to solve the problem of figuring out what and how you want to
-do logging in your project, node-logger provides some basic functions for you to
-customize and create the logging system you want. Think of it like middleware, except
-for logging.
