@@ -18,12 +18,6 @@ var Logger = function() {
     Object.defineProperty(self, 'TRACE', { value: 5 });
 };
 
-// some builtin decorators for the default logger
-var trace = require('./lib/trace');
-var timestamp = require('./lib/timestamp');
-var error = require('./lib/error');
-var stdout = require('./lib/stdout');
-
 // add a decorator, order matters
 Logger.prototype.push_decorator = function(decorator) {
     var self = this;
@@ -84,11 +78,27 @@ Logger.prototype.trace = function(a1, a2, a3, a4, a5) {
 };
 
 // create a default logger with some helpful decorators
-module.exports.default = function() {
-    return new Logger()
+module.exports.default = function(options) {
+
+    // some builtin decorators for the default logger
+    var trace = require('./lib/trace');
+    var timestamp = require('./lib/timestamp');
+    var error = require('./lib/error');
+    var stdout = require('./lib/stdout');
+
+    var options = options || {};
+
+    var logger = new Logger()
         .push_decorator(trace(Logger.prototype.log, 1))
         .push_decorator(timestamp())
-        .push_decorator(error())
+        .push_decorator(error());
+
+    // did the user want stdout?
+    if (options.stdout) {
+        logger.push_decorator(stdout());
+    }
+
+    return logger;
 };
 
 // constants, for reference, chaning has no affect
@@ -111,5 +121,6 @@ module.exports.decorators = {
     hostname: require('./lib/hostname'),
     timestamp: require('./lib/timestamp'),
     error: require('./lib/error'),
+    git: require('./lib/git'),
 };
 
