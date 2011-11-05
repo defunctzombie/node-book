@@ -1,13 +1,4 @@
 
-// log levels
-// numeric for easy filtering
-var PANIC = 0;
-var ERROR = 1;
-var WARN  = 2;
-var INFO  = 3;
-var DEBUG = 4;
-var TRACE = 5;
-
 /// manage logging facilities
 var Logger = function() {
     var self = this;
@@ -21,15 +12,22 @@ var Logger = function() {
         };
         self._initial_decorator.next(msg, entry);
     };
+
+    // constants
+    // repeated here for easy acces since usually we have an instance
+    Object.defineProperty(self, 'PANIC', { value: 0 });
+    Object.defineProperty(self, 'ERROR', { value: 1 });
+    Object.defineProperty(self, 'WARN',  { value: 2 });
+    Object.defineProperty(self, 'INFO',  { value: 3 });
+    Object.defineProperty(self, 'DEBUG', { value: 4 });
+    Object.defineProperty(self, 'TRACE', { value: 5 });
 };
 
-// constants
-Logger.PANIC = PANIC;
-Logger.ERROR = ERROR;
-Logger.WARN = WARN;
-Logger.INFO = INFO;
-Logger.DEBUG = DEBUG;
-Logger.TRACE = TRACE;
+// some builtin decorators for the default logger
+var trace = require('./lib/trace');
+var timestamp = require('./lib/timestamp');
+var error = require('./lib/error');
+var stdout = require('./lib/stdout');
 
 // add a decorator, order matters
 Logger.prototype.push_decorator = function(decorator) {
@@ -47,6 +45,7 @@ Logger.prototype.push_decorator = function(decorator) {
 
     // newly added decorator is now the last decorator
     self._last_decorator = decorator;
+    return self;
 };
 
 Logger.prototype.log = function(level, msg) {
@@ -56,39 +55,49 @@ Logger.prototype.log = function(level, msg) {
 
 /// log a panic
 Logger.prototype.panic = function(msg) {
-    return this.log(PANIC, msg);
+    return this.log(this.PANIC, msg);
 };
 
 /// log an error
 Logger.prototype.error = function(msg) {
-    return this.log(ERROR, msg);
+    return this.log(this.ERROR, msg);
 };
 
 /// log a warning
 Logger.prototype.warn = function(msg) {
-    return this.log(WARN, msg);
+    return this.log(this.WARN, msg);
 };
 
 /// log info
 Logger.prototype.info = function(msg) {
-    return this.log(INFO, msg);
+    return this.log(this.INFO, msg);
 };
 
 /// log debug information
 Logger.prototype.debug = function(msg) {
-    return this.log(DEBUG, msg);
+    return this.log(this.DEBUG, msg);
 };
 
 /// log trace info
 Logger.prototype.trace = function(msg) {
-    return this.log(TRACE, msg);
+    return this.log(this.TRACE, msg);
 };
 
-// default logger if user is just using the module
-var default_logger = new Logger();
+// create a default logger with some helpful decorators
+module.exports.default = function() {
+    return new Logger()
+        .push_decorator(trace(Logger.prototype.log, 1))
+        .push_decorator(timestamp())
+        .push_decorator(error())
+};
 
-// expose all of the features of a logger
-module.exports = default_logger;
+// constants, for reference, chaning has no affect
+module.exports.PANIC = 0;
+module.exports.ERROR = 1;
+module.exports.WARN =  2;
+module.exports.INFO =  3;
+module.exports.DEBUG = 4;
+module.exports.TRACE = 5;
 
 // create a new logger, independent of the global logger or any other loggers
 module.exports.create = function() {
