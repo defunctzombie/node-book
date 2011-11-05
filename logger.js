@@ -31,10 +31,10 @@ Logger.prototype.push_decorator = function(decorator) {
     // create a function 'next' on the last decorator
     // that will chain to the newly added decorator
     // this of it like a linked list
-    self._last_decorator.next = function(entry) {
-        decorator.apply(null, arguments);
+    self._last_decorator.next = function(entry, a1, a2, a3, a4, a5) {
+        decorator(entry, a1, a2, a3, a4, a5);
         if (decorator.next) {
-            decorator.next.apply(null, arguments);
+            decorator.next(entry, a1, a2, a3, a4, a5);
         }
     }
 
@@ -43,50 +43,44 @@ Logger.prototype.push_decorator = function(decorator) {
     return self;
 };
 
-Logger.prototype.log = function(level, args) {
+Logger.prototype.log = function(level, a1, a2, a3, a4, a5) {
     var self = this;
 
     var entry = {
         level: level
     };
 
-    var args = Array.prototype.slice.call(args);
-
-    // add the entry to the arguments for decorators
-    args.unshift(entry);
-
-    // start chain of decorators
-    self._initial_decorator.next.apply(self, args);
+    self._initial_decorator.next(entry, a1, a2, a3, a4, a5);
 };
 
 /// log a panic
-Logger.prototype.panic = function() {
-    return this.log(this.PANIC, arguments);
+Logger.prototype.panic = function(a1, a2, a3, a4, a5) {
+    return this.log(this.PANIC, a1, a2, a3, a4, a5);
 };
 
 /// log an error
-Logger.prototype.error = function() {
-    return this.log(this.ERROR, arguments);
+Logger.prototype.error = function(a1, a2, a3, a4, a5) {
+    return this.log(this.ERROR, a1, a2, a3, a4, a5);
 };
 
 /// log a warning
-Logger.prototype.warn = function() {
-    return this.log(this.WARN, arguments);
+Logger.prototype.warn = function(a1, a2, a3, a4, a5) {
+    return this.log(this.WARN, a1, a2, a3, a4, a5);
 };
 
 /// log info
-Logger.prototype.info = function() {
-    return this.log(this.INFO, arguments);
+Logger.prototype.info = function(a1, a2, a3, a4, a5) {
+    return this.log(this.INFO, a1, a2, a3, a4, a5);
 };
 
 /// log debug information
-Logger.prototype.debug = function() {
-    return this.log(this.DEBUG, arguments);
+Logger.prototype.debug = function(a1, a2, a3, a4, a5) {
+    return this.log(this.DEBUG, a1, a2, a3, a4, a5);
 };
 
 /// log trace info
-Logger.prototype.trace = function() {
-    return this.log(this.TRACE, arguments);
+Logger.prototype.trace = function(a1, a2, a3, a4, a5) {
+    return this.log(this.TRACE, a1, a2, a3, a4, a5);
 };
 
 // create a default logger with some helpful decorators
