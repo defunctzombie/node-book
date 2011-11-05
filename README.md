@@ -26,6 +26,8 @@ The above is a basic and quite boring example, the thing that really makes node-
 
 To recreate the default logger we can use the builtin decorators.
 
+While node-logger can be used to do your logging directly, it is meant to be thinly wrapped and adapted to your project's needs.
+
 ```
 // this will create a default blank logger for us
 // a blank logger just has the panic, error, etc... methods and nothing else
@@ -38,8 +40,9 @@ Our default logger has a few elements:
 * stdout printing
 
 We can recreate them with the following:
+
 ```
-var decorators = require('logger');
+var decorators = require('logger').decorators;
 
 // adds a timestamp entry (our stdout decorator uses this)
 log.push_decorator(decorators.timestamp());
