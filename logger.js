@@ -10,7 +10,7 @@ var Logger = function() {
         var entry = {
             level: level
         };
-        self._initial_decorator.next(msg, entry);
+        self._initial_decorator.next(entry, msg);
     };
 
     // constants
@@ -36,10 +36,10 @@ Logger.prototype.push_decorator = function(decorator) {
     // create a function 'next' on the last decorator
     // that will chain to the newly added decorator
     // this of it like a linked list
-    self._last_decorator.next = function(msg, entry) {
-        decorator(msg, entry);
+    self._last_decorator.next = function(entry, msg) {
+        decorator(entry, msg);
         if (decorator.next) {
-            decorator.next(msg, entry);
+            decorator.next(entry, msg);
         }
     }
 

@@ -5,7 +5,7 @@ module.exports.default = function(test) {
     var logger = require('../logger').default();
 
     var captured;
-    function capture(msg, entry) {
+    function capture(entry, msg) {
         // time always changes...
         delete entry.timestamp;
         captured = entry;
@@ -33,7 +33,7 @@ module.exports.blank = function(test) {
     var logger = require('../logger').create();
 
     var captured;
-    function capture(msg, entry) {
+    function capture(entry, msg) {
         captured = entry;
     }
 
