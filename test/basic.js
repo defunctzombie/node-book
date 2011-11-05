@@ -1,8 +1,9 @@
 
 module.exports.default = function(test) {
 
-    var cache_loc = require.resolve('../logger');
-    var logger = require('../logger');
+    // use create instead of the global logger to prevent
+    // stomping on decorators for other tests
+    var logger = require('../logger').create();
 
     var captured;
     function capture(msg, entry) {
@@ -15,9 +16,6 @@ module.exports.default = function(test) {
     logger.panic('help');
     test.deepEqual({level: 0}, captured);
 
-    // remove the loaded logger module
-    // without this, other tests won't be able to set their own decorators
-    delete require.cache[cache_loc];
     test.done();
 };
 

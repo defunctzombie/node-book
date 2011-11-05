@@ -8,95 +8,94 @@ var INFO  = 3;
 var DEBUG = 4;
 var TRACE = 5;
 
-// first decorator which will start off the process chain
-var initial_decorator = function(level, msg) {
-    var entry = {
-        level: level
+/// manage logging facilities
+var Logger = function() {
+    var self = this;
+
+    // setup the initial decorator
+    // just creates the entry object and then starts the chain of execution
+    // for all of the remaining decorators
+    self._last_decorator = self._initial_decorator = function(level, msg) {
+        var entry = {
+            level: level
+        };
+        self._initial_decorator.next(msg, entry);
     };
-    initial_decorator.next(msg, entry);
 };
 
-// the last decorator to be added
-// this is tracked because decorators are executed in order
-var last_decorator = initial_decorator;
+// constants
+Logger.PANIC = PANIC;
+Logger.ERROR = ERROR;
+Logger.WARN = WARN;
+Logger.INFO = INFO;
+Logger.DEBUG = DEBUG;
+Logger.TRACE = TRACE;
 
-// simple wrapper to start the decorator chain processing
-var logger = function(level, msg) {
-    // start the decorator chain processing
-    initial_decorator(level, msg);
-};
+// add a decorator, order matters
+Logger.prototype.push_decorator = function(decorator) {
+    var self = this;
 
-// expose the base logger which just creates a basic entry with a log level
-// and then delegates work to the registered decorators
-module.exports = logger;
-
-module.exports.PANIC = PANIC;
-module.exports.ERROR = ERROR;
-module.exports.WARN = WARN;
-module.exports.INFO = INFO;
-module.exports.DEBUG = DEBUG;
-module.exports.TRACE = TRACE;
-
-/// add a new decorator to be applied when a new message is logged
-/// decorators are applied in the order added
-module.exports.push_decorator = function(decorator) {
-    last_decorator.next = function(msg, entry) {
+    // create a function 'next' on the last decorator
+    // that will chain to the newly added decorator
+    // this of it like a linked list
+    self._last_decorator.next = function(msg, entry) {
         decorator(msg, entry);
         if (decorator.next) {
             decorator.next(msg, entry);
         }
     }
-    last_decorator = decorator;
+
+    // newly added decorator is now the last decorator
+    self._last_decorator = decorator;
+};
+
+Logger.prototype.log = function(level, msg) {
+    // start the decorator chain processing
+    this._initial_decorator(level, msg);
 };
 
 /// log a panic
-module.exports.panic = function(msg) {
-    return logger(PANIC, msg);
+Logger.prototype.panic = function(msg) {
+    return this.log(PANIC, msg);
 };
 
 /// log an error
-module.exports.error = function(msg) {
-    return logger(ERROR, msg);
+Logger.prototype.error = function(msg) {
+    return this.log(ERROR, msg);
 };
 
 /// log a warning
-module.exports.warn = function(msg) {
-    return logger(WARN, msg);
+Logger.prototype.warn = function(msg) {
+    return this.log(WARN, msg);
 };
 
 /// log info
-module.exports.info = function(msg) {
-    return logger(INFO, msg);
+Logger.prototype.info = function(msg) {
+    return this.log(INFO, msg);
 };
 
 /// log debug information
-module.exports.debug = function(msg) {
-    return logger(DEBUG, msg);
+Logger.prototype.debug = function(msg) {
+    return this.log(DEBUG, msg);
 };
 
 /// log trace info
-module.exports.trace = function(msg) {
-    return logger(TRACE, msg);
+Logger.prototype.trace = function(msg) {
+    return this.log(TRACE, msg);
 };
 
-module.exports.level_toa = function(level) {
-    switch (level) {
-        case PANIC:
-            return 'panic';
-        case ERROR:
-            return 'error';
-        case WARN:
-            return 'warn';
-        case INFO:
-            return 'info';
-        case DEBUG:
-            return 'debug';
-        case TRACE:
-            return 'trace';
-    }
-    return 'unknown';
+// default logger if user is just using the module
+var default_logger = new Logger();
+
+// expose all of the features of a logger
+module.exports = default_logger;
+
+// create a new logger, independent of the global logger or any other loggers
+module.exports.create = function() {
+    return new Logger();
 };
 
+// builtin decorators
 module.exports.decorators = {
     trace: require('./lib/trace'),
     stdout: require('./lib/stdout'),
