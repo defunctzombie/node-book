@@ -11,14 +11,14 @@ npm install https://github.com/shtylman/node-logger/tarball/master
 To get started with basic logging, just require and get the default
 logger.
 
-```var log = require('logger').default({stdout: true});```
+```var log = require('logger').default();```
 
 You can now log using the methods: panic, error, warn, info, debug, trace
 
 ```log.info('haters be loggin');```
 
 Will output (on stdout):
-```1320530931.414 [info] haters be loggin```
+```[info] haters be loggin```
 
 ## details
 
@@ -35,8 +35,11 @@ var log = require('logger').create();
 ```
 
 Our default logger has a few elements:
+* git id
+* Error stacktrace (if relevant)
 * time
 * message
+* hostname
 * stdout printing
 
 We can recreate them with the following:
@@ -44,12 +47,12 @@ We can recreate them with the following:
 ```
 var decorators = require('logger').decorators;
 
+// basic logger functionality
+// processes the initial arguments
+log.push_decorator(decorators.base());
+
 // adds a timestamp entry (our stdout decorator uses this)
 log.push_decorator(decorators.timestamp());
-
-// processes the message and adds a 'message' field
-// this will handle Error objects and extract their message fields
-log.push_decorator(decorators.error());
 
 // print the message to console
 log.push_decorator(decorators.stdout());
@@ -73,16 +76,18 @@ node-logger comes with some builtin decorators that you might find useful:
 ### timestamp
 > inserts a 'timestamp' entry (seconds using Date.now()/1000.0)
 
-### error
-> processes the first input to a log method and sets the 'message' field to a string of the input (or if an Error instance then the error message)
+### base
+> processes the arguments to the logging functions
 
 ### git
 > inserts a 'git_id' field with the current active git id
 
 ## custom decorators
 
-Writing a decorator for your needs is very easy. A decorator is just a function that has the following signature: function(entry, a1, a2, a3, a4, a5).
+Writing a decorator for your needs is very easy. A decorator is just a function that has the following signature: function(...).
 
-'entry' is the object which contains the fields and other modifications from previous decorators.
+'this' is the object which contains the fields and other modifications from previous decorators.
+
+All other arguments to the function will be passed along. See lib/base.js for an example of how to consume arguments.
 
 a1...a5 are the arguments you passed in when calling your log method. Usually you will just use a1 (as a string or Error object) but node-logger is flexible and you can make whatever decorator you want. A simple decorator would be one that wraps util.format and allows you to format strings while keeping your logging calls concise.

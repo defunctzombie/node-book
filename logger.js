@@ -25,10 +25,11 @@ Logger.prototype.push_decorator = function(decorator) {
     // create a function 'next' on the last decorator
     // that will chain to the newly added decorator
     // this of it like a linked list
-    self._last_decorator.next = function(entry, a1, a2, a3, a4, a5) {
-        decorator(entry, a1, a2, a3, a4, a5);
+    self._last_decorator.next = function(entry, args) {
+
+        decorator.apply(entry, args);
         if (decorator.next) {
-            decorator.next(entry, a1, a2, a3, a4, a5);
+            decorator.next(entry, args);
         }
     }
 
@@ -37,69 +38,30 @@ Logger.prototype.push_decorator = function(decorator) {
     return self;
 };
 
-Logger.prototype.log = function(level, a1, a2, a3, a4, a5) {
+/// this exists so that the trace decorator can trim off library calls
+var log = function(level, args) {
     var self = this;
 
     var entry = {
         level: level
     };
 
-    self._initial_decorator.next(entry, a1, a2, a3, a4, a5);
-};
+    self._initial_decorator.next(entry, args);
+    return self;
+}
 
-/// log a panic
-Logger.prototype.panic = function(a1, a2, a3, a4, a5) {
-    return this.log(this.PANIC, a1, a2, a3, a4, a5);
-};
-
-/// log an error
-Logger.prototype.error = function(a1, a2, a3, a4, a5) {
-    return this.log(this.ERROR, a1, a2, a3, a4, a5);
-};
-
-/// log a warning
-Logger.prototype.warn = function(a1, a2, a3, a4, a5) {
-    return this.log(this.WARN, a1, a2, a3, a4, a5);
-};
-
-/// log info
-Logger.prototype.info = function(a1, a2, a3, a4, a5) {
-    return this.log(this.INFO, a1, a2, a3, a4, a5);
-};
-
-/// log debug information
-Logger.prototype.debug = function(a1, a2, a3, a4, a5) {
-    return this.log(this.DEBUG, a1, a2, a3, a4, a5);
-};
-
-/// log trace info
-Logger.prototype.trace = function(a1, a2, a3, a4, a5) {
-    return this.log(this.TRACE, a1, a2, a3, a4, a5);
-};
-
-// create a default logger with some helpful decorators
-module.exports.default = function(options) {
-
-    // some builtin decorators for the default logger
-    var trace = require('./lib/trace');
-    var timestamp = require('./lib/timestamp');
-    var error = require('./lib/error');
-    var stdout = require('./lib/stdout');
-
-    var options = options || {};
-
-    var logger = new Logger()
-        .push_decorator(trace(Logger.prototype.log, 1))
-        .push_decorator(timestamp())
-        .push_decorator(error());
-
-    // did the user want stdout?
-    if (options.stdout) {
-        logger.push_decorator(stdout());
+function mk_log(level) {
+    return function() {
+        return log.call(this, level, arguments);
     }
+}
 
-    return logger;
-};
+Logger.prototype.panic = mk_log(0);
+Logger.prototype.error = mk_log(1);
+Logger.prototype.warn = mk_log(2);
+Logger.prototype.info = mk_log(3);
+Logger.prototype.debug = mk_log(4);
+Logger.prototype.trace = mk_log(5);
 
 // constants, for reference, chaning has no affect
 module.exports.PANIC = 0;
@@ -115,12 +77,32 @@ module.exports.create = function() {
 };
 
 // builtin decorators
-module.exports.decorators = {
+var decorators = module.exports.decorators = {
+    base: require('./lib/base'),
     trace: require('./lib/trace'),
     stdout: require('./lib/stdout'),
     hostname: require('./lib/hostname'),
     timestamp: require('./lib/timestamp'),
-    error: require('./lib/error'),
     git: require('./lib/git'),
+};
+
+// create a default logger with some helpful decorators
+module.exports.default = function(options) {
+
+    var options = options || {};
+
+    var logger = new Logger()
+        .push_decorator(decorators.base())
+        .push_decorator(decorators.timestamp())
+        .push_decorator(decorators.hostname())
+        .push_decorator(decorators.trace(log, 1))
+        .push_decorator(decorators.git())
+
+    // did the user want stdout?
+    if (options.stdout === undefined || options.stdout === true) {
+        logger.push_decorator(decorators.stdout());
+    }
+
+    return logger;
 };
 

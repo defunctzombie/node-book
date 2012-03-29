@@ -2,17 +2,17 @@
     "author": "Roman Shtylman <shtylman@gmail.com>",
     "name": "logger",
     "description": "flexible node.js logging library",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "repository": {
         "type": "git",
         "url": "git://github.com/shtylman/node-logger.git"
     },
     "main": "logger.js",
     "scripts": {
-        "test": "nodeunit test"
+        "test": "node test/run.js"
     },
     "dependencies": {},
     "devDependencies": {
-        "nodeunit": "*"
+        "mocha": ">=1.0.0"
     }
 }

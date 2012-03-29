@@ -1,48 +1,49 @@
+var assert = require('assert');
 
-module.exports.default = function(test) {
+var logger = require('../');
 
-    // the default logger provided for the user
-    var logger = require('../logger').default();
+test('default', function() {
+
+    var log = logger.default({stdout: false});
 
     var captured;
-    function capture(entry) {
+    function capture() {
+        var entry = this;
         // time always changes...
         delete entry.timestamp;
         captured = entry;
     }
 
     // capture out final log events
-    logger.push_decorator(capture);
+    log.push_decorator(capture);
 
-    logger.warn('help');
-    test.deepEqual({
+    // always make this variable 1+it's line number
+    var lineno = 1 + 21;
+    log.warn('help');
+    assert.deepEqual({
         level: logger.WARN,
         filename: __filename,
-        lineno: 17,
+        lineno: lineno,
         message: 'help',
     }, captured);
+});
 
-    test.done();
-};
-
-// test creating a new blank logger
-module.exports.blank = function(test) {
+test('blank', function() {
 
     // use create instead of the global logger to prevent
     // stomping on decorators for other tests
-    var logger = require('../logger').create();
+    var log = logger.create();
 
     var captured;
-    function capture(entry) {
+    function capture() {
+        var entry = this;
         captured = entry;
     }
 
     // capture out final log events
-    logger.push_decorator(capture);
+    log.push_decorator(capture);
 
-    logger.panic('help');
-    test.deepEqual({level: logger.PANIC}, captured);
-
-    test.done();
-};
+    log.panic('help');
+    assert.deepEqual({level: logger.PANIC}, captured);
+});
 
