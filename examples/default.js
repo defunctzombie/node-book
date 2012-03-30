@@ -1,5 +1,6 @@
-// get a basic logger that will write the final entry to stdout
-var log = require('..').default({stdout: true});
+
+// make a new logging object using the default decorators
+var log = require('..').default();
 
 log.panic('panic log line');
 log.error('error log line');

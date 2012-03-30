@@ -30,18 +30,15 @@ test('default', function() {
 
 test('blank', function() {
 
-    // use create instead of the global logger to prevent
-    // stomping on decorators for other tests
-    var log = logger.create();
-
     var captured;
     function capture() {
         var entry = this;
         captured = entry;
     }
 
-    // capture out final log events
-    log.push_decorator(capture);
+    // use create instead of the global logger to prevent
+    // stomping on decorators for other tests
+    var log = logger.blank([capture]);
 
     log.panic('help');
     assert.deepEqual({level: logger.PANIC}, captured);

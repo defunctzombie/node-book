@@ -56,6 +56,7 @@ function mk_log(level) {
     }
 }
 
+// actual methods the user calls
 Logger.prototype.panic = mk_log(0);
 Logger.prototype.error = mk_log(1);
 Logger.prototype.warn = mk_log(2);
@@ -63,21 +64,7 @@ Logger.prototype.info = mk_log(3);
 Logger.prototype.debug = mk_log(4);
 Logger.prototype.trace = mk_log(5);
 
-// constants, for reference, chaning has no affect
-module.exports.PANIC = 0;
-module.exports.ERROR = 1;
-module.exports.WARN =  2;
-module.exports.INFO =  3;
-module.exports.DEBUG = 4;
-module.exports.TRACE = 5;
-
-// create a new logger, independent of the global logger or any other loggers
-module.exports.create = function() {
-    return new Logger();
-};
-
-// builtin decorators
-var decorators = module.exports.decorators = {
+var decorators = {
     base: require('./lib/base'),
     trace: require('./lib/trace'),
     stdout: require('./lib/stdout'),
@@ -86,9 +73,32 @@ var decorators = module.exports.decorators = {
     git: require('./lib/git'),
 };
 
-// create a default logger with some helpful decorators
-module.exports.default = function(options) {
+/// constants
+module.exports.PANIC = 0;
+module.exports.ERROR = 1;
+module.exports.WARN =  2;
+module.exports.INFO =  3;
+module.exports.DEBUG = 4;
+module.exports.TRACE = 5;
 
+/// builtin decorators
+module.exports.decorators = decorators;
+
+/// create a new logger with no decorators
+module.exports.blank = function(decorators) {
+    var log = new Logger();
+
+    if (decorators) {
+        decorators.forEach(function(decorator) {
+            log.push_decorator(decorator);
+        });
+    }
+
+    return log;
+};
+
+/// create a default logger with some helpful decorators
+module.exports.default = function(options) {
     var options = options || {};
 
     var logger = new Logger()
