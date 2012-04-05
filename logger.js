@@ -105,8 +105,11 @@ module.exports.default = function(options) {
         .push_decorator(decorators.base())
         .push_decorator(decorators.timestamp())
         .push_decorator(decorators.hostname())
-        .push_decorator(decorators.trace(log, 1))
-        .push_decorator(decorators.git())
+        .push_decorator(decorators.trace(log, 1));
+
+    if (options.git === undefined || options.git === true) {
+        logger.push_decorator(decorators.git())
+    }
 
     // did the user want stdout?
     if (options.stdout === undefined || options.stdout === true) {
