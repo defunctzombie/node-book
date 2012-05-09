@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/shtylman/node-logger.png?branch=master)](http://travis-ci.org/shtylman/node-logger)
+
 node-logger is a flexible and extensible logging library for node.js
 
 Instead of trying to solve the problem of figuring out what and how you want to do logging in your project, node-logger provides some basic functions for you to customize and create the logging system you want. Think of it like middleware, except for logging.
