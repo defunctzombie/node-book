@@ -1,11 +1,11 @@
 {
     "author": "Roman Shtylman <shtylman@gmail.com>",
-    "name": "logger",
+    "name": "book",
     "description": "flexible node.js logging library",
     "version": "1.0.0",
     "repository": {
         "type": "git",
-        "url": "git://github.com/shtylman/node-logger.git"
+        "url": "git://github.com/shtylman/node-book.git"
     },
     "main": "logger.js",
     "scripts": {
