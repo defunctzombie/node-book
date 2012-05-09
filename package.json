@@ -9,7 +9,7 @@
     },
     "main": "logger.js",
     "scripts": {
-        "test": "node test/run.js"
+        "test": "mocha"
     },
     "dependencies": {},
     "devDependencies": {
