@@ -7,6 +7,11 @@
         "type": "git",
         "url": "git://github.com/shtylman/node-book.git"
     },
+    "keywords": [
+        "logging",
+        "logger",
+        "log"
+    ],
     "main": "logger.js",
     "scripts": {
         "test": "mocha"
