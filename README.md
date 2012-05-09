@@ -1,12 +1,14 @@
-[![Build Status](https://secure.travis-ci.org/shtylman/node-logger.png?branch=master)](http://travis-ci.org/shtylman/node-logger)
+# book [![Build Status](https://secure.travis-ci.org/shtylman/node-book.png?branch=master)](http://travis-ci.org/shtylman/node-book) #
 
-node-logger is a flexible and extensible logging library for node.js
+book is a flexible and extensible logging library for node.js
 
-Instead of trying to solve the problem of figuring out what and how you want to do logging in your project, node-logger provides some basic functions for you to customize and create the logging system you want. Think of it like middleware, except for logging.
+Instead of trying to solve the problem of figuring out what and how you want to do logging in your project, book provides some basic functions for you to customize and create the logging system you want. Think of it like middleware, except for logging.
 
 ## install
 
-npm install https://github.com/shtylman/node-logger/tarball/master
+```
+npm install book
+```
 
 ## quickstart
 
@@ -14,7 +16,7 @@ To get started with basic logging, just require and initialize the default
 logger.
 
 ```javascript
-var log = require('logger').default();
+var log = require('book').default();
 ```
 
 You can now log using the methods: panic, error, warn, info, debug, trace
@@ -103,8 +105,8 @@ Decorators are processed in the order you push them onto a logger.
 ### using your decorators
 
 ```javascript
-// logger.blank creates a logging object with no decorators
-var log = require('logger').blank();
+// book.blank creates a logging object with no decorators
+var log = require('book').blank();
 
 // remember, decorators are processed in the order you push them
 log.push_decorator(sample_decorator);
@@ -121,7 +123,7 @@ log.info('hello');
 There are a number of decorators shipped with the library. You can access them with:
 
 ```javascript
-var decorators = require('logger').decorators;
+var decorators = require('book').decorators;
 ```
 
 The default logger is composed of these builtin decorators. Use a blank logger if you want to pick and choose which ones to use.
