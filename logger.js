@@ -3,10 +3,10 @@
 var Logger = function() {
     var self = this;
 
-    // setup the initial decorator
+    // setup the initial middleware
     // just creates the entry object and then starts the chain of execution
-    // for all of the remaining decorators
-    self._last_decorator = self._initial_decorator = {};
+    // for all of the remaining middleware
+    self._last_middlware = self._initial_middleware = {};
 
     // constants
     // repeated here for easy acces since usually we have an instance
@@ -18,25 +18,28 @@ var Logger = function() {
     Object.defineProperty(self, 'TRACE', { value: 5 });
 };
 
-// add a decorator, order matters
-Logger.prototype.push_decorator = function(decorator) {
+// add middleware, order matters
+Logger.prototype.use = function(fn) {
     var self = this;
 
     // create a function 'next' on the last decorator
     // that will chain to the newly added decorator
     // this of it like a linked list
-    self._last_decorator.next = function(entry, args) {
+    self._last_middlware.next = function(entry, args) {
 
-        decorator.apply(entry, args);
-        if (decorator.next) {
-            decorator.next(entry, args);
+        fn.apply(entry, args);
+        if (fn.next) {
+            fn.next(entry, args);
         }
     }
 
     // newly added decorator is now the last decorator
-    self._last_decorator = decorator;
+    self._last_middlware = fn;
     return self;
 };
+
+/// DEPRECATED
+Logger.prototype.push_decorator = Logger.prototype.use;
 
 /// this exists so that the trace decorator can trim off library calls
 var log = function(level, args) {
@@ -46,7 +49,7 @@ var log = function(level, args) {
         level: level
     };
 
-    self._initial_decorator.next(entry, args);
+    self._initial_middleware.next(entry, args);
     return self;
 }
 
@@ -64,7 +67,7 @@ Logger.prototype.info = mk_log(3);
 Logger.prototype.debug = mk_log(4);
 Logger.prototype.trace = mk_log(5);
 
-var decorators = {
+var middleware = {
     base: require('./lib/base'),
     trace: require('./lib/trace'),
     stdout: require('./lib/stdout'),
@@ -81,39 +84,42 @@ module.exports.INFO =  3;
 module.exports.DEBUG = 4;
 module.exports.TRACE = 5;
 
-/// builtin decorators
-module.exports.decorators = decorators;
+/// builtin middleware
+module.exports.middleware = middleware;
 
-/// create a new logger with no decorators
-module.exports.blank = function(decorators) {
+// DEPRECATED
+module.exports.decorators = middleware;
+
+/// create a new logger with no middleware
+module.exports.blank = function(middleware) {
     var log = new Logger();
 
-    if (decorators) {
-        decorators.forEach(function(decorator) {
-            log.push_decorator(decorator);
+    if (middleware) {
+        middleware.forEach(function(fn) {
+            log.use(fn);
         });
     }
 
     return log;
 };
 
-/// create a default logger with some helpful decorators
+/// create a default logger with some helpful middleware
 module.exports.default = function(options) {
     var options = options || {};
 
     var logger = new Logger()
-        .push_decorator(decorators.base())
-        .push_decorator(decorators.timestamp())
-        .push_decorator(decorators.hostname())
-        .push_decorator(decorators.trace(log, 1));
+        .use(middleware.base())
+        .use(middleware.timestamp())
+        .use(middleware.hostname())
+        .use(middleware.trace(log, 1));
 
     if (options.git === undefined || options.git === true) {
-        logger.push_decorator(decorators.git())
+        logger.use(middleware.git())
     }
 
     // did the user want stdout?
     if (options.stdout === undefined || options.stdout === true) {
-        logger.push_decorator(decorators.stdout());
+        logger.use(middleware.stdout());
     }
 
     return logger;

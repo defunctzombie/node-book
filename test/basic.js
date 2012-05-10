@@ -15,7 +15,7 @@ test('default', function() {
     }
 
     // capture out final log events
-    log.push_decorator(capture);
+    log.use(capture);
 
     // always make this variable 1+it's line number
     var lineno = 1 + 21;
@@ -37,7 +37,7 @@ test('blank', function() {
     }
 
     // use create instead of the global logger to prevent
-    // stomping on decorators for other tests
+    // stomping on middleware for other tests
     var log = logger.blank([capture]);
 
     log.panic('help');

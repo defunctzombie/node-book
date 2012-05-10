@@ -75,19 +75,19 @@ log.warn({ something: 'bad' }, 'foo %s', 'bar');
 
 Note: Only when a string is encountered are all of the remaining arguments consumed. Until then, each argument is processed independently as if it appeared first.
 
-## decorators
+## middleware
 
-The entire functionality of the default logger is built using 'decorators'. These act just like middleware to create a pipeline of 'features' for the logger. You can customize loggers to include/exclude any features you want.
+The entire functionality of the default logger is built using middleware. These create pipeline of 'features' for the logger. You can customize loggers to include/exclude any features you want. Middleware can add fields to the logging output our it can act as a transport to send the log entry someplace else.
 
-The 'default' logger is simply a certain selection of decorators provided with the library. You are not required to use it and can roll your own custom solution.
+The 'default' logger is simply a certain selection of middleware provided with the library. You are not required to use it and can roll your own custom solution.
 
 ### make your own
 
-A decorator is simply a function which will do some processing on the logging entry. It is passed all of the arguments of the original log call (info, error, etc) and the 'this' is set to the logging entry. Your decorator should modify the fields of 'this' to add or remove relevant entries.
+Middleware is simply a function which will do some processing on the logging entry. It is passed all of the arguments of the original log call (info, error, etc) and the 'this' is set to the logging entry. Your middleware should modify the fields of 'this' to add or remove relevant entries.
 
 ```javascript
-// simple decorator that adds a timestamp to the entry
-function sample_decorator() {
+// simple middleware that adds a timestamp to the entry
+function sample_middleware() {
   var entry = this;
 
   // this is the only provided field
@@ -102,31 +102,31 @@ function sample_decorator() {
 
 Decorators are processed in the order you push them onto a logger.
 
-### using your decorators
+### using your middleware
 
 ```javascript
-// book.blank creates a logging object with no decorators
+// book.blank creates a logging object with no middleware
 var log = require('book').blank();
 
-// remember, decorators are processed in the order you push them
-log.push_decorator(sample_decorator);
+// remember, middleware is processed in the order you use it
+log.use(sample_middleware);
 
 // you can now call any of the logging functions
 log.info('hello');
 
-// output will depent on your decorators
-// use any of the provided decorators to build up your own logger
+// output will depend on any middleware you have added
+// use any of the provided middleware to build up your own logger
 ```
 
-### provided decorators
+### provided middleware
 
-There are a number of decorators shipped with the library. You can access them with:
+Book ships with some builtin middleware. You can access it with:
 
 ```javascript
-var decorators = require('book').decorators;
+var book_middleware = require('book').middleware;
 ```
 
-The default logger is composed of these builtin decorators. Use a blank logger if you want to pick and choose which ones to use.
+The default logger is composed from this middleware. Use a blank logger if you want to pick and choose which ones to use.
 
 #### base
 > provides the basic argument processing outlined above
