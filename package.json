@@ -1,23 +1,27 @@
 {
-    "author": "Roman Shtylman <shtylman@gmail.com>",
-    "name": "book",
-    "description": "flexible node.js logging library",
-    "version": "1.0.0",
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/shtylman/node-book.git"
-    },
-    "keywords": [
-        "logging",
-        "logger",
-        "log"
-    ],
-    "main": "logger.js",
-    "scripts": {
-        "test": "mocha"
-    },
-    "dependencies": {},
-    "devDependencies": {
-        "mocha": ">=1.0.0"
-    }
+  "author": "Roman Shtylman <shtylman@gmail.com>",
+  "name": "book",
+  "description": "flexible node.js logging library",
+  "version": "1.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/shtylman/node-book.git"
+  },
+  "keywords": [
+    "logging",
+    "logger",
+    "log"
+  ],
+  "main": "logger.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": ">=1.0.0"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
 }
