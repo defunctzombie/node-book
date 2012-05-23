@@ -144,6 +144,3 @@ The default logger is composed from this middleware. Use a blank logger if you w
 #### timestamp
 > inserts a 'timestamp' entry (seconds using Date.now()/1000.0)
 
-#### git
-> inserts a 'git_id' field with the current active git commit id
-

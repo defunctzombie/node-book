@@ -73,7 +73,6 @@ var middleware = {
     stdout: require('./lib/stdout'),
     hostname: require('./lib/hostname'),
     timestamp: require('./lib/timestamp'),
-    git: require('./lib/git'),
 };
 
 /// constants
@@ -112,10 +111,6 @@ module.exports.default = function(options) {
         .use(middleware.timestamp())
         .use(middleware.hostname())
         .use(middleware.trace(log, 1));
-
-    if (options.git === undefined || options.git === true) {
-        logger.use(middleware.git())
-    }
 
     // did the user want stdout?
     if (options.stdout === undefined || options.stdout === true) {
