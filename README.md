@@ -12,16 +12,13 @@ npm install book
 
 ## quickstart
 
-To get started with basic logging, just require and initialize the default
+To get started with basic logging, just ```require('book')``` and start logging!
 logger.
 
 ```javascript
-var log = require('book').default();
-```
+var log = require('book');
 
-You can now log using the methods: panic, error, warn, info, debug, trace
-
-```javascript
+// You can now log using the methods: panic, error, warn, info, debug, trace
 log.info('haters be loggin');
 ```
 
@@ -77,6 +74,18 @@ Note: Only when a string is encountered are all of the remaining arguments consu
 
 If you want your logs to go to a file, use the [book-file](https://github.com/shtylman/node-book-file) module.
 
+## options
+
+The default logging setup will write logs to stdout. If you would like to disable this behavior use the following:
+
+```javascript
+var log = require('book').default({
+  stdout: false
+});
+```
+
+This will give you a new default logger with no output to stdout. For more flexible configuration read about middleware below.
+
 ## middleware
 
 The entire functionality of the default logger is built using middleware. These create pipeline of 'features' for the logger. You can customize loggers to include/exclude any features you want. Middleware can add fields to the logging output our it can act as a transport to send the log entry someplace else.
@@ -118,6 +127,27 @@ log.info('hello');
 
 // output will depend on any middleware you have added
 // use any of the provided middleware to build up your own logger
+```
+
+### attaching middleware
+
+You can add middleware to the default logger similar to the blank logger above. Lets say we want to provide out own middleware to print to stdout. We can disable the default stdout and provide out own.
+
+```javascript
+// create a default logger with no stdout middleware
+var log = require('book').default({
+  stdout: false
+});
+
+log.use(function() {
+  var entry = this;
+
+  // our own code for printing to stdout
+  // console.log(...);
+});
+
+// this will use our own stdout middleware
+log.info('hello world!');
 ```
 
 ### provided middleware

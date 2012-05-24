@@ -129,3 +129,25 @@ module.exports.default = function(options) {
     return logger;
 };
 
+// automatically created logger if user called panic, error, warn, etc
+// on the module directly
+var auto;
+
+function mk_module_log(level) {
+    return function() {
+        if (!auto) {
+            auto = module.exports.default();
+        }
+        return log.call(auto, level, arguments);
+    }
+}
+
+// module level methods for those that just want to start logging
+// and don't want to fuss with any setup
+module.exports.panic = mk_module_log(0);
+module.exports.error = mk_module_log(1);
+module.exports.warn = mk_module_log(2);
+module.exports.info = mk_module_log(3);
+module.exports.debug = mk_module_log(4);
+module.exports.trace = mk_module_log(5);
+

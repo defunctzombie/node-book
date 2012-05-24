@@ -1,6 +1,6 @@
 
 // make a new logging object using the default decorators
-var log = require('..').default();
+var log = require('..');
 
 log.panic('panic log line');
 log.error('error log line');
