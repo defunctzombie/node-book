@@ -75,6 +75,8 @@ log.warn({ something: 'bad' }, 'foo %s', 'bar');
 
 Note: Only when a string is encountered are all of the remaining arguments consumed. Until then, each argument is processed independently as if it appeared first.
 
+If you want your logs to go to a file, use the [book-file](https://github.com/shtylman/node-book-file) module.
+
 ## middleware
 
 The entire functionality of the default logger is built using middleware. These create pipeline of 'features' for the logger. You can customize loggers to include/exclude any features you want. Middleware can add fields to the logging output our it can act as a transport to send the log entry someplace else.
