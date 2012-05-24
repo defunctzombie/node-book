@@ -1,10 +1,10 @@
 var assert = require('assert');
 
-var logger = require('../');
+var book = require('../');
 
 test('default', function() {
 
-    var log = logger.default({stdout: false});
+    var log = book.default({stdout: false});
 
     var captured;
     function capture() {
@@ -17,14 +17,32 @@ test('default', function() {
     // capture out final log events
     log.use(capture);
 
-    // always make this variable 1+it's line number
-    var lineno = 1 + 21;
-    log.warn('help');
+    log.info('help');
     assert.deepEqual({
-        level: logger.WARN,
-        filename: __filename,
-        lineno: lineno,
+        level: book.INFO,
         message: 'help',
+    }, captured);
+});
+
+test('string format', function() {
+
+    var log = book.default({stdout: false});
+
+    var captured;
+    function capture() {
+        var entry = this;
+        // time always changes...
+        delete entry.timestamp;
+        captured = entry;
+    }
+
+    // capture out final log events
+    log.use(capture);
+
+    log.info('help %s %d', 'me', 2);
+    assert.deepEqual({
+        level: book.INFO,
+        message: 'help me 2',
     }, captured);
 });
 
@@ -36,11 +54,11 @@ test('blank', function() {
         captured = entry;
     }
 
-    // use create instead of the global logger to prevent
+    // use create instead of the global book to prevent
     // stomping on middleware for other tests
-    var log = logger.blank([capture]);
+    var log = book.blank([capture]);
 
-    log.panic('help');
-    assert.deepEqual({level: logger.PANIC}, captured);
+    log.debug('help');
+    assert.deepEqual({level: book.DEBUG}, captured);
 });
 

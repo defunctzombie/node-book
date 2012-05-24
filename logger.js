@@ -110,7 +110,16 @@ module.exports.default = function(options) {
         .use(middleware.base())
         .use(middleware.timestamp())
         .use(middleware.hostname())
-        .use(middleware.trace(log, 1));
+
+    // default trace level is warnings only
+    if (options.trace === undefined) {
+        options.trace = module.exports.WARN;
+    }
+
+    // if user wanted a higher trace level, use it
+    if (options.trace !== false) {
+        logger.use(middleware.trace(log, 1, options.trace));
+    }
 
     // did the user want stdout?
     if (options.stdout === undefined || options.stdout === true) {
