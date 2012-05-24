@@ -144,3 +144,26 @@ The default logger is composed from this middleware. Use a blank logger if you w
 #### timestamp
 > inserts a 'timestamp' entry (seconds using Date.now()/1000.0)
 
+### middleware modules ###
+
+There are a number of npm modules which provide various transports and other logging features.
+
+#### book-file ####
+
+[book-file](https://github.com/shtylman/node-book-file) records your log entries to a file.
+
+You can add the file transport to your logger using the following:
+
+```javascript
+log.use(require('book-file')({
+      filename: '/path/to/file.log'
+});
+```
+
+#### book-email ####
+
+[book-email](https://github.com/shtylman/node-book-email) sends your log messages over email.
+
+#### book-git ####
+
+[book-git](https://github.com/shtlyman/node-book-git) adds a ```commit``` field to your log entry which has the deployed git commit id.
