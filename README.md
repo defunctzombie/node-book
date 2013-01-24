@@ -66,7 +66,7 @@ log.error(new Error('again?'), 'another %s', 'cat');
 // after the first arguments, remaining arguments are again treated as if they were the first
 log.warn({ something: 'bad' }, 'foo %s', 'bar');
 
-// will print the message, however something: 'bad' will be added to the final log item
+// will print the message 'foo bar', however the {something: 'bad'} object can be accessed in your custom middleware as you please.
 [warn] foo bar
 ```
 
