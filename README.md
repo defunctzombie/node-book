@@ -198,4 +198,4 @@ log.use(require('book-file')({
 
 #### book-git ####
 
-[book-git](https://github.com/shtlyman/node-book-git) adds a ```commit``` field to your log entry which has the deployed git commit id.
+[book-git](https://github.com/shtylman/node-book-git) adds a ```commit``` field to your log entry which has the deployed git commit id.
