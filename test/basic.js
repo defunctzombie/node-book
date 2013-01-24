@@ -1,4 +1,7 @@
 var assert = require('assert');
+var os = require('os');
+
+var hostname = os.hostname();
 
 var book = require('../');
 
@@ -21,6 +24,7 @@ test('default', function() {
     assert.deepEqual({
         level: book.INFO,
         message: 'help',
+        hostname: hostname,
     }, captured);
 });
 
@@ -43,6 +47,7 @@ test('string format', function() {
     assert.deepEqual({
         level: book.INFO,
         message: 'help me 2',
+        hostname: hostname,
     }, captured);
 });
 

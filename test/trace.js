@@ -1,4 +1,8 @@
 var assert = require('assert');
+var os = require('os');
+
+var hostname = os.hostname();
+
 var book = require('../');
 
 test('trace', function() {
@@ -16,13 +20,14 @@ test('trace', function() {
     log.use(capture);
 
     // always make this variable 1+it's line number
-    var lineno = 1 + 19;
+    var lineno = 1 + 23;
     log.warn('help');
     assert.deepEqual({
         level: book.WARN,
         filename: __filename,
         lineno: lineno,
         message: 'help',
+        hostname: hostname
     }, captured);
 });
 
