@@ -13,7 +13,6 @@ npm install book
 ## quickstart
 
 To get started with basic logging, just ```require('book')``` and start logging!
-logger.
 
 ```javascript
 var log = require('book');
