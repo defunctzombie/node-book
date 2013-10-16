@@ -1,4 +1,4 @@
-# book [![Build Status](https://secure.travis-ci.org/shtylman/node-book.png?branch=master)](http://travis-ci.org/shtylman/node-book) #
+# book [![Build Status](https://secure.travis-ci.org/defunctzombie/node-book.png?branch=master)](http://travis-ci.org/defunctzombie/node-book) #
 
 book is a flexible and extensible logging library for node.js
 
@@ -71,7 +71,7 @@ log.warn({ something: 'bad' }, 'foo %s', 'bar');
 
 Note: Only when a string is encountered are all of the remaining arguments consumed. Until then, each argument is processed independently as if it appeared first.
 
-If you want your logs to go to a file, use the [book-file](https://github.com/shtylman/node-book-file) module.
+If you want your logs to go to a file, use the [book-file](https://github.com/defunctzombie/node-book-file) module.
 
 ## options
 
@@ -181,7 +181,7 @@ There are a number of npm modules which provide various transports and other log
 
 #### book-file ####
 
-[book-file](https://github.com/shtylman/node-book-file) records your log entries to a file.
+[book-file](https://github.com/defunctzombie/node-book-file) records your log entries to a file.
 
 You can add the file transport to your logger using the following:
 
@@ -193,8 +193,8 @@ log.use(require('book-file')({
 
 #### book-email ####
 
-[book-email](https://github.com/shtylman/node-book-email) sends your log messages over email.
+[book-email](https://github.com/defunctzombie/node-book-email) sends your log messages over email.
 
 #### book-git ####
 
-[book-git](https://github.com/shtylman/node-book-git) adds a ```commit``` field to your log entry which has the deployed git commit id.
+[book-git](https://github.com/defunctzombie/node-book-git) adds a ```commit``` field to your log entry which has the deployed git commit id.
