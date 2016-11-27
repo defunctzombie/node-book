@@ -1,4 +1,4 @@
-# book [![Build Status](https://secure.travis-ci.org/defunctzombie/node-book.png?branch=master)](http://travis-ci.org/defunctzombie/node-book) #
+# book [![Build Status](https://secure.travis-ci.org/defunctzombie/node-book.svg?branch=master)](http://travis-ci.org/defunctzombie/node-book) #
 
 book is a flexible and extensible logging library for node.js
 
