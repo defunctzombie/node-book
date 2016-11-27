@@ -5,7 +5,7 @@
   "version": "1.3.1",
   "repository": {
     "type": "git",
-    "url": "git://github.com/shtylman/node-book.git"
+    "url": "git://github.com/defunctzombie/node-book.git"
   },
   "keywords": [
     "logging",
