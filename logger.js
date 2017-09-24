@@ -9,7 +9,7 @@ var Logger = function() {
     self._last_middlware = self._initial_middleware = {};
 
     // constants
-    // repeated here for easy acces since usually we have an instance
+    // repeated here for easy access since usually we have an instance
     Object.defineProperty(self, 'PANIC', { value: 0 });
     Object.defineProperty(self, 'ERROR', { value: 1 });
     Object.defineProperty(self, 'WARN',  { value: 2 });
@@ -37,9 +37,6 @@ Logger.prototype.use = function(fn) {
     self._last_middlware = fn;
     return self;
 };
-
-/// DEPRECATED
-Logger.prototype.push_decorator = Logger.prototype.use;
 
 /// this exists so that the trace decorator can trim off library calls
 var log = function(level, args) {
@@ -131,14 +128,14 @@ module.exports.default = function(options) {
 
 // automatically created logger if user called panic, error, warn, etc
 // on the module directly
-var auto;
+if (!global.__bookLogger) {
+    global.__bookLogger = module.exports.default();
+}
 
 function mk_module_log(level) {
     return function() {
-        if (!auto) {
-            auto = module.exports.default();
-        }
-        return log.call(auto, level, arguments);
+        const logger = global.__bookLogger;
+        return log.call(logger, level, arguments);
     }
 }
 
